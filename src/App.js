@@ -5,13 +5,21 @@
 */
 
 // State hook u import edin
-import React from "react";
+import React, {useState} from "react";
 
 // Gönderiler (çoğul!) ve AramaÇubuğu bileşenlerini import edin, çünkü bunlar App bileşeni içinde kullanılacak
 // sahteVeri'yi import edin
 import "./App.css";
+import AramaCubugu from "./bilesenler/AramaCubugu/AramaCubugu";
+import Gönderiler from "./bilesenler/Gonderiler/Gonderiler";
+import sahteVeri from "./sahte-veri";
+import Gonderiler from "./bilesenler/Gonderiler/Gonderiler";
 
 const App = () => {
+  const [gonderiler, setGonderiler] = useState(sahteVeri);
+  const [arama, setArama] = useState("");
+
+  const [begendiklerim, setBegendiklerim] = useState([]);
   // Gönderi nesneleri dizisini tutmak için "gonderiler" adlı bir state oluşturun, **sahteVeri'yi yükleyin**.
   // Artık sahteVeri'ye ihtiyacınız olmayacak.
   // Arama çubuğunun çalışması için , arama kriterini tutacak başka bir state'e ihtiyacımız olacak.
@@ -28,11 +36,30 @@ const App = () => {
         - gönderinin idsi "gonderiID" ile eşleşirse, istenen değerlerle yeni bir gönderi nesnesi döndürün.
         - aksi takdirde, sadece gönderi nesnesini değiştirmeden döndürün.
      */
+    const guncellenmisGonderiler = gonderiler.map((gonderi) => {
+      if(gonderiID==gonderi.id && !begendiklerim.includes(gonderiID)){
+        gonderi.likes++;
+        begendiklerim.push(gonderiID);
+        setBegendiklerim(begendiklerim);
+      }
+      return gonderi;
+    });
+    setGonderiler(guncellenmisGonderiler);
   };
+
+  const changeHandler = (event) =>{
+    const filterGonderiler = sahteVeri.filter((item)=>{
+      return item.username.includes(event.target.value)
+    } )
+    setGonderiler(filterGonderiler);
+    setArama(event.target.value)
+}
 
   return (
     <div className="App">
-      App Çalışıyor
+       
+      <AramaCubugu arama={arama} setArama={setArama} changeHandler={changeHandler}/>
+      <Gonderiler gonderiler={gonderiler} gonderiyiBegen={gonderiyiBegen}/>
       {/* Yukarıdaki metni projeye başladığınızda silin*/}
       {/* AramaÇubuğu ve Gönderiler'i render etmesi için buraya ekleyin */}
       {/* Her bileşenin hangi proplara ihtiyaç duyduğunu kontrol edin, eğer ihtiyaç varsa ekleyin! */}
